@@ -95,15 +95,19 @@
 
             const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(data.error ? data.error.message : "Ошибка API");
-            }
+let text = "";
 
-            const text = data.candidates[0].content.parts[0].text;
-            
-            aiResponse.innerHTML = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-            loading.style.display = 'none';
-            resultArea.style.display = 'block';
+if (data.candidates && data.candidates.length > 0) {
+    text = data.candidates[0].content.parts[0].text;
+} else if (data.error) {
+    throw new Error(data.error.message || "Ошибка API");
+} else {
+    throw new Error("Пустой ответ от сервера");
+}
+
+aiResponse.innerHTML = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+loading.style.display = 'none';
+resultArea.style.display = 'block';
 
         } catch (e) {
             loading.style.display = 'none';
@@ -116,4 +120,5 @@
 
 </body>
 </html>
+
 
