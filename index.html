@@ -1,124 +1,116 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartPath AI - Твой навигатор обучения</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        :root { --primary: #4A90E2; --bg: #f4f7f9; --text: #333; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: var(--primary); font-size: 24px; }
-        .question { margin-bottom: 20px; padding: 15px; background: #fafafa; border-radius: 10px; }
-        .options { display: grid; gap: 10px; margin-top: 10px; }
-        button { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-size: 16px; width: 100%; font-weight: 600; margin-top: 10px; }
-        button:disabled { background: #ccc; cursor: not-allowed; }
-        .ai-output { background: #f0f7ff; border-left: 5px solid var(--primary); padding: 15px; margin-top: 20px; white-space: pre-wrap; font-size: 15px; }
-        #loading { display: none; text-align: center; color: var(--primary); font-weight: bold; margin: 20px 0; }
-        .error { color: red; background: #ffe6e6; padding: 15px; border-radius: 8px; margin-top: 20px; display: none; border: 1px solid red; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartPath AI - Твой навигатор обучения</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root { --primary: #4A90E2; --bg: #f4f7f9; --text: #333; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; margin: 0; padding: 20px; }
+.container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+h1 { text-align: center; color: var(--primary); font-size: 24px; }
+.question { margin-bottom: 20px; padding: 15px; background: #fafafa; border-radius: 10px; }
+.options { display: grid; gap: 10px; margin-top: 10px; }
+button { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-size: 16px; width: 100%; font-weight: 600; margin-top: 10px; }
+button:disabled { background: #ccc; cursor: not-allowed; }
+.ai-output { background: #f0f7ff; border-left: 5px solid var(--primary); padding: 15px; margin-top: 20px; white-space: pre-wrap; font-size: 15px; }
+#errorBox { color: red; background: #ffe6e6; padding: 15px; border-radius: 8px; margin-top: 20px; display: none; border: 1px solid red; }
+#loading { display: none; text-align: center; color: var(--primary); font-weight: bold; margin: 20px 0; }
+</style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🚀 SmartPath AI</h1>
-    
-    <form id="quizForm">
-        <div class="question">
-            <p><strong>1. Как ты лучше разберешься в новой программе?</strong></p>
-            <div class="options">
-                <label><input type="radio" name="q1" value="Визуал" required> Рассмотрю скриншоты</label>
-                <label><input type="radio" name="q1" value="Аудиал"> Послушаю видеообзор</label>
-                <label><input type="radio" name="q1" value="Практик"> Буду тыкать во все кнопки</label>
-            </div>
-        </div>
+<h1>🚀 SmartPath AI</h1>
 
-        <div class="question">
-            <p><strong>2. Как ты ищешь дорогу в незнакомом месте?</strong></p>
-            <div class="options">
-                <label><input type="radio" name="q2" value="Карта" required> Посмотрю на карту</label>
-                <label><input type="radio" name="q2" value="Расспрос"> Спрошу у людей</label>
-                <label><input type="radio" name="q2" value="Интуиция"> Пойду наугад</label>
-            </div>
-        </div>
+<form id="quizForm">
+<div class="question">
+<p><strong>1. Как ты лучше разберешься в новой программе?</strong></p>
+<div class="options">
+<label><input type="radio" name="q1" value="Визуал" required> Рассмотрю скриншоты</label>
+<label><input type="radio" name="q1" value="Аудиал"> Послушаю видеообзор</label>
+<label><input type="radio" name="q1" value="Практик"> Буду тыкать во все кнопки</label>
+</div>
+</div>
 
-        <button type="button" id="submitBtn" onclick="runAI()">Получить план от ИИ</button>
-    </form>
+<div class="question">
+<p><strong>2. Как ты ищешь дорогу в незнакомом месте?</strong></p>
+<div class="options">
+<label><input type="radio" name="q2" value="Карта" required> Посмотрю на карту</label>
+<label><input type="radio" name="q2" value="Расспрос"> Спрошу у людей</label>
+<label><input type="radio" name="q2" value="Интуиция"> Пойду наугад</label>
+</div>
+</div>
 
-    <div id="loading">🤖 ИИ думает... Подожди секунд 10.</div>
-    <div id="errorBox" class="error"></div>
+<button type="button" id="submitBtn" onclick="runAI()">Получить план от ИИ</button>
+</form>
 
-    <div id="resultArea" style="display:none;">
-        <h2>✨ Твой результат:</h2>
-        <div id="aiResponse" class="ai-output"></div>
-        <button onclick="window.location.reload()" style="background: #666; margin-top: 20px;">Пройти заново</button>
-    </div>
+<div id="loading">🤖 ИИ думает... Подожди секунд 10.</div>
+<div id="errorBox"></div>
+
+<div id="resultArea" style="display:none;">
+<h2>✨ Твой результат:</h2>
+<div id="aiResponse" class="ai-output"></div>
+<button onclick="window.location.reload()" style="background: #666; margin-top: 20px;">Пройти заново</button>
+</div>
 </div>
 
 <script>
-    // ВСТАВЬ СВОЙ КЛЮЧ МЕЖДУ КАВЫЧЕК
+async function runAI() {
+    const form = document.getElementById('quizForm');
+    const loading = document.getElementById('loading');
+    const errorBox = document.getElementById('errorBox');
+    const resultArea = document.getElementById('resultArea');
+    const aiResponse = document.getElementById('aiResponse');
 
-    async function runAI() {
-        const form = document.getElementById('quizForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const loading = document.getElementById('loading');
-        const errorBox = document.getElementById('errorBox');
-        const resultArea = document.getElementById('resultArea');
-        const aiResponse = document.getElementById('aiResponse');
+    const formData = new FormData(form);
+    const results = Object.fromEntries(formData.entries());
 
-        // Сбор ответов
-        const formData = new FormData(form);
-        const results = Object.fromEntries(formData.entries());
-
-        if (Object.keys(results).length < 2) {
-            alert("Ответь на все вопросы!");
-            return;
-        }
-
-        // Подготовка интерфейса
-        form.style.display = 'none';
-        loading.style.display = 'block';
-        errorBox.style.display = 'none';
-
-        const prompt = "Проанализируй ответы теста: " + JSON.stringify(results) + ". Дай краткий совет по обучению на русском языке.";
-
-        try {
-            // Исправленный URL
-            const response = await fetch("https://test1-nzgy.onrender.com/generate", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }]
-                })
-            });
-
-            const data = await response.json();
-
-let text = "";
-
-if (data.candidates && data.candidates.length > 0) {
-    text = data.candidates[0].content.parts[0].text;
-} else if (data.error) {
-    throw new Error(data.error.message || "Ошибка API");
-} else {
-    throw new Error("Пустой ответ от сервера");
-}
-
-aiResponse.innerHTML = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-loading.style.display = 'none';
-resultArea.style.display = 'block';
-
-        } catch (e) {
-            loading.style.display = 'none';
-            errorBox.style.display = 'block';
-            errorBox.innerHTML = "<b>Произошла ошибка:</b><br>" + e.message + "<br><br>Проверь ключ или включи VPN.";
-            form.style.display = 'block';
-        }
+    if (Object.keys(results).length < 2) {
+        alert("Ответь на все вопросы!");
+        return;
     }
+
+    form.style.display = 'none';
+    loading.style.display = 'block';
+    errorBox.style.display = 'none';
+
+    const prompt = "Проанализируй ответы теста: " + JSON.stringify(results) + ". Дай краткий совет по обучению на русском языке.";
+
+    try {
+        const response = await fetch("https://test1-nzgy.onrender.com", { // вставь свой backend URL
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }]
+            })
+        });
+
+        const data = await response.json();
+
+        // ✅ проверка, чтобы избежать undefined
+        let text = "";
+        if (data.candidates && data.candidates.length > 0) {
+            text = data.candidates[0].content.parts[0].text;
+        } else if (data.error) {
+            throw new Error(data.error.message || "Ошибка API");
+        } else {
+            throw new Error("Пустой ответ от сервера");
+        }
+
+        aiResponse.innerHTML = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+        loading.style.display = 'none';
+        resultArea.style.display = 'block';
+
+    } catch (e) {
+        loading.style.display = 'none';
+        errorBox.style.display = 'block';
+        errorBox.innerHTML = "<b>Произошла ошибка:</b><br>" + e.message + "<br><br>Проверь ключ или включи VPN.";
+        form.style.display = 'block';
+    }
+}
 </script>
 
 </body>
 </html>
-
-
